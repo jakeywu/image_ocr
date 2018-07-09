@@ -17,8 +17,6 @@ FLAGS = tf.flags.FLAGS
 
 def main(_):
     train_x, train_y, test_x, test_y = PrepareData(FLAGS.image_path, FLAGS.ratio).train_and_test_data
-    import pdb
-    pdb.set_trace()
     model = CnnRnnCtcOrc(FLAGS.max_captcha_len, FLAGS.output_dim, FLAGS.num_lstm_hidden)
     model.train(train_x, train_y, FLAGS)
 

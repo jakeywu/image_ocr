@@ -102,7 +102,7 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         nets = tf.transpose(cnn_layers, [0, 2, 1, 3])  # 改为NWHC
         # 视W为特征max_timestep
         nets = tf.reshape(nets, shape=[-1, shapes[2], shapes[1] * shapes[3]])
-        # nets = tf.layers.dense(inputs=nets, units=256, activation=tf.nn.relu)
+        nets = tf.layers.dense(inputs=nets, units=256, activation=tf.nn.relu)
         self.seq_len = tf.reduce_sum(tf.cast(tf.not_equal(-999999., tf.reduce_sum(nets, axis=2)),
                                              tf.int32), axis=1)
         self.__lstm_layers(inputs=nets)
