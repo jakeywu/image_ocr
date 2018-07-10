@@ -17,9 +17,8 @@ class ImageCaptchaHandle(object):
         dst_width = tf.to_int32(shape[1] * self.CaptchaHeight / shape[0])
         image = tf.image.resize_images(image, tf.stack([self.CaptchaHeight, dst_width]))
         image = tf.image.resize_image_with_crop_or_pad(image, self.CaptchaHeight, self.CaptchaWidth)
-        image = tf.image.random_brightness(image, max_delta=0.3)
-        image = tf.image.random_contrast(image, 0.1, 0.3)
-        image = tf.image.per_image_standardization(image)
+        image = tf.image.transpose_image(image)
+        image = 1. / 255 * image - 0.5
         return image
 
     @staticmethod
@@ -35,7 +34,7 @@ class ImageCaptchaHandle(object):
         with tf.variable_scope(name_or_scope=scope_name):
             kernel = tf.get_variable(
                 name="W", shape=[filter_height, filter_width, in_channels, out_channels], dtype=tf.float32,
-                initializer=tf.truncated_normal_initializer()
+                initializer=tf.truncated_normal_initializer(stddev=0.01)
             )
             bias = tf.get_variable(name="a", shape=[out_channels], dtype=tf.float32,
                                    initializer=tf.constant_initializer())
@@ -47,7 +46,7 @@ class ImageCaptchaHandle(object):
         """批量归一化"""
         with tf.variable_scope(scope_name):
             bn_neural = tf.layers.batch_normalization(
-                inputs=neural, center=True, scale=True, epsilon=1e-5, training=is_training, name="batchNormalization")
+                inputs=neural, center=True, scale=True, training=is_training, name="batchNormalization")
             return bn_neural
 
     @staticmethod
@@ -90,20 +89,18 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
     def _make_data_iterator(self):
         """数据准备层"""
         dataset = tf.data.Dataset.from_tensor_slices({"file_path": self.file_paths, "target": self.targets})
-        dataset = dataset.map(self._image_process).shuffle(buffer_size=1000).batch(self.batch_size).repeat(
-            self.epoch)
+        dataset = dataset.map(self._image_process).batch(self.batch_size).repeat(self.epoch)
         self.iterator = dataset.make_initializable_iterator()
         self.images, self.labels = self.iterator.get_next()
 
     def _inference(self):
         """模型推理层"""
-        cnn_layers = self.__cnn_layers(self.images)  # 默认NHWC
+        cnn_layers = self.__cnn_layers(self.images)  # 默认NWHC
         shapes = cnn_layers.get_shape().as_list()
-        nets = tf.transpose(cnn_layers, [0, 2, 1, 3])  # 改为NWHC
         # 视W为特征max_timestep
-        nets = tf.reshape(nets, shape=[-1, shapes[2], shapes[1] * shapes[3]])
+        nets = tf.reshape(cnn_layers, shape=[-1, shapes[1], shapes[2] * shapes[3]])
         nets = tf.layers.dense(inputs=nets, units=256, activation=tf.nn.relu)
-        self.seq_len = tf.reduce_sum(tf.cast(tf.not_equal(-999999., tf.reduce_sum(nets, axis=2)),
+        self.seq_len = tf.reduce_sum(tf.cast(tf.not_equal(-9999999., tf.reduce_sum(nets, axis=2)),
                                              tf.int32), axis=1)
         self.__lstm_layers(inputs=nets)
 
@@ -120,27 +117,20 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
 
     def __lstm_layers(self, inputs):
         with tf.variable_scope("lstm"):
+            shape = tf.shape(inputs)
             cell_fw = tf.nn.rnn_cell.LSTMCell(num_units=self.NumLSTMHidden)
             cell_bw = tf.nn.rnn_cell.LSTMCell(num_units=self.NumLSTMHidden)
-            lstm_multi = tf.nn.rnn_cell.MultiRNNCell(cells=[cell_fw, cell_bw])
-            lstm_state = lstm_multi.zero_state(batch_size=tf.shape(self.seq_len)[0], dtype=tf.float32)
-            outputs, _ = tf.nn.dynamic_rnn(
-                cell=lstm_multi,
-                inputs=inputs,
-                sequence_length=self.seq_len,
-                initial_state=lstm_state,
-                dtype=tf.float32
-            )
-            outputs = tf.reshape(outputs, [-1, self.NumLSTMHidden])
+            outputs, _ = tf.nn.bidirectional_dynamic_rnn(cell_fw, cell_bw, inputs, sequence_length=self.seq_len, dtype=tf.float32)
+            bi_outputs = tf.reshape(tf.concat(outputs, 2), [-1, 2 * self.NumLSTMHidden])
             lstm_w = tf.get_variable(
-                name="W_out", shape=[128, self.outputDim], dtype=tf.float32,
-                initializer=tf.truncated_normal_initializer()
+                name="W_out", shape=[2 * self.NumLSTMHidden, self.outputDim], dtype=tf.float32,
+                initializer=tf.truncated_normal_initializer(stddev=0.01)
             )
             lstm_b = tf.get_variable(name="b_out", shape=[self.outputDim], dtype=tf.float32,
                                      initializer=tf.constant_initializer())
-            self.logits = tf.matmul(outputs, lstm_w) + lstm_b
-            shape = tf.shape(inputs)
-            self.logits = tf.reshape(self.logits, [shape[0], inputs.get_shape().as_list()[1], self.outputDim])
+
+            self.logits = tf.matmul(bi_outputs, lstm_w) + lstm_b
+            self.logits = tf.reshape(self.logits, [shape[0], inputs.shape[1], self.outputDim])
             # Time major
             self.logits = tf.transpose(self.logits, (1, 0, 2))
 
@@ -169,13 +159,13 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
             train_op = tf.train.GradientDescentOptimizer(learning_rate=config.learning_rate).minimize(self.loss)
         self.session.run(tf.global_variables_initializer())
         self.session.run(
-            self.iterator.initializer,
+            [self.iterator.initializer],
             feed_dict={self.file_paths: train_x, self.targets: train_y, self.batch_size: config.batch_size, self.epoch: config.epoch}
         )
         step = 0
         while True:
             try:
-                _, ls, dist, acc = self.session.run([train_op, self.loss, self.distance, self.accuracy],
+                _, ls, dist, acc, s = self.session.run([train_op, self.loss, self.distance, self.accuracy, self.sparse_label],
                                                     feed_dict={self.is_training: True})
                 print("**Train** STEP[%04d]: Loss: %.4f \t Distance: %.4f \t Accuracy: %.4f" % (step, ls, dist, acc))
                 step += 1

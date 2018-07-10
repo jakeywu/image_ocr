@@ -7,10 +7,10 @@ tf.flags.DEFINE_string(name="mode", default="train", help="train, test")
 tf.flags.DEFINE_float(name="ratio", default=0.9, help="train ratio of all data")
 tf.flags.DEFINE_integer(name="max_captcha_len", default=6, help="max captcha len")
 tf.flags.DEFINE_integer(name="output_dim", default=11, help="the total length is 11:  0-9 and blank ")
-tf.flags.DEFINE_integer(name="num_lstm_hidden", default=128, help="multi lstm num hidden")
-tf.flags.DEFINE_integer(name="batch_size", default=20, help="batch size of train data ")
-tf.flags.DEFINE_integer(name="epoch", default=20, help="maximum epochs")
-tf.flags.DEFINE_float(name="learning_rate", default=0.02, help="inital learning rate")
+tf.flags.DEFINE_integer(name="num_lstm_hidden", default=64, help="multi lstm num hidden")
+tf.flags.DEFINE_integer(name="batch_size", default=64, help="batch size of train data ")
+tf.flags.DEFINE_integer(name="epoch", default=100, help="maximum epochs")
+tf.flags.DEFINE_float(name="learning_rate", default=0.01, help="inital learning rate")
 
 FLAGS = tf.flags.FLAGS
 
