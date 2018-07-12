@@ -1,3 +1,4 @@
+import os
 import tensorflow as tf
 
 
@@ -8,11 +9,11 @@ class ImageCaptchaHandle(object):
 
     def _image_process(self, image_path_and_target):
         image = self.__read_image(image_path_and_target["file_path"])
-        image = self.__format_image(image)
+        image = self.format_image(image)
         label = image_path_and_target["target"]
         return image, label
 
-    def __format_image(self, image):
+    def format_image(self, image):
         shape = tf.shape(image)
         dst_width = tf.to_int32(shape[1] * self.CaptchaHeight / shape[0])
         image = tf.image.resize_images(image, tf.stack([self.CaptchaHeight, dst_width]))
@@ -74,7 +75,7 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         self.NumLSTMHidden = num_lstm_hidden
         self._init_placeholder()
         self._make_data_iterator()
-        self._inference()
+        self.logits = self._inference(self.images, self.is_training)
         self._build_train_op()
         self.session = tf.Session()
 
@@ -93,16 +94,16 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         self.iterator = dataset.make_initializable_iterator()
         self.images, self.labels = self.iterator.get_next()
 
-    def _inference(self):
+    def _inference(self, inputs, is_training):
         """模型推理层"""
-        cnn_layers = self.__cnn_layers(self.images)  # 默认NWHC
+        cnn_layers = self.__cnn_layers(inputs, is_training)  # 默认NWHC
         shapes = cnn_layers.get_shape().as_list()
         # 视W为特征max_timestep
         nets = tf.reshape(cnn_layers, shape=[-1, shapes[1], shapes[2] * shapes[3]])
         nets = tf.layers.dense(inputs=nets, units=256, activation=tf.nn.relu)
         self.seq_len = tf.reduce_sum(tf.cast(tf.not_equal(-9999999., tf.reduce_sum(nets, axis=2)),
                                              tf.int32), axis=1)
-        self.__lstm_layers(inputs=nets)
+        return self.__lstm_layers(inputs=nets)
 
     def _build_train_op(self):
         """构建/优化训练模型"""
@@ -132,26 +133,40 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
             self.logits = tf.matmul(bi_outputs, lstm_w) + lstm_b
             self.logits = tf.reshape(self.logits, [shape[0], inputs.shape[1], self.outputDim])
             # Time major
-            self.logits = tf.transpose(self.logits, (1, 0, 2))
+            return tf.transpose(self.logits, (1, 0, 2))
 
-    def __cnn_layers(self, inputs):
+    def __cnn_layers(self, inputs, is_training):
         """3个卷积层"""
         with tf.name_scope("cnn"):
             conv1 = self._cnn_2d(inputs, "cnn-1", 3, 32)
-            bn1 = self._batch_norm(conv1, "bn-1", self.is_training)
+            bn1 = self._batch_norm(conv1, "bn-1", is_training)
             relu1 = tf.nn.leaky_relu(bn1, alpha=0.1, name="leaky_relu")
             pool1 = self._max_pool(relu1, 2)
 
             conv2 = self._cnn_2d(pool1, "cnn-2", 32, 64)
-            bn2 = self._batch_norm(conv2, "bn-2", self.is_training)
+            bn2 = self._batch_norm(conv2, "bn-2", is_training)
             p_relu2 = tf.nn.leaky_relu(bn2, alpha=0.1, name="leaky_relu")
             pool2 = self._max_pool(p_relu2, 2)
 
             conv3 = self._cnn_2d(pool2, "cnn-3", 64, 128)
-            bn3 = self._batch_norm(conv3, "bn-3", self.is_training)
+            bn3 = self._batch_norm(conv3, "bn-3", is_training)
             p_relu3 = tf.nn.leaky_relu(bn3, alpha=0.1, name="leaky_relu")
             pool3 = self._max_pool(p_relu3, 2)
         return pool3
+
+    @staticmethod
+    def save(session):
+        saver = tf.train.Saver()
+        checkpoints_path = "checkpoints/model"
+        if os.path.exists(checkpoints_path):
+            os.mkdir(checkpoints_path)
+        saver.save(session, checkpoints_path)
+
+    @staticmethod
+    def load(session):
+        checkpoints_path = "checkpoints/"
+        saver = tf.train.Saver()
+        saver.restore(session, tf.train.latest_checkpoint(checkpoints_path))
 
     def train(self, train_x, train_y, config):
         update_ops = tf.get_collection(tf.GraphKeys.UPDATE_OPS)
@@ -165,9 +180,55 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         step = 0
         while True:
             try:
-                _, ls, dist, acc, s = self.session.run([train_op, self.loss, self.distance, self.accuracy, self.sparse_label],
-                                                    feed_dict={self.is_training: True})
+                _, ls, dist, acc, s = self.session.run(
+                    [train_op, self.loss, self.distance, self.accuracy, self.sparse_label],
+                    feed_dict={self.is_training: True})
                 print("**Train** STEP[%04d]: Loss: %.4f \t Distance: %.4f \t Accuracy: %.4f" % (step, ls, dist, acc))
                 step += 1
             except tf.errors.OutOfRangeError:
                 break
+        self.save(self.session)
+
+    def test(self, data, batch_size=16):
+        self.session.run(self.iterator.initializer,
+                         feed_dict={self.file_paths: data["file_paths"],
+                                    self.labels: data["labels"],
+                                    self.epoch: 1,
+                                    self.batch_size: batch_size})
+
+        step = 0
+        while True:
+            try:
+                ls, dist, acc = self.session.run([self.loss, self.distance, self.accuracy],
+                                                 feed_dict={self.is_training: False})
+                print("++Test+++ STEP[%04d]: Loss: %.4f \t Distance: %.4f \t Accuracy: %.4f" % (step, ls, dist, acc))
+                step += 1
+            except tf.errors.OutOfRangeError:
+                break
+
+    def release(self, export_dir):
+        builder = tf.saved_model.builder.SavedModelBuilder(export_dir=export_dir)
+        g = tf.Graph()
+        with g.as_default():
+            input_images = tf.placeholder(tf.uint8, shape=[None, None, None, 3])
+            f_input_images = tf.map_fn(ImageCaptchaHandle.format_image, input_images, tf.float32)
+            outputs = self._inference(f_input_images, is_training=False)
+            seq_length = tf.reduce_sum(tf.cast(tf.not_equal(-999999., tf.reduce_sum(outputs, axis=2)),
+                                               tf.int32), axis=0)
+            ctc_decode_result = tf.nn.ctc_greedy_decoder(inputs=outputs, sequence_length=seq_length)
+            model_predict = tf.to_int32(ctc_decode_result[0][0])
+            final_predict = tf.sparse_tensor_to_dense(model_predict, default_value=-1)
+            with tf.Session(graph=g) as sess:
+                self.load(sess)
+                tensor_info_image = tf.saved_model.utils.build_tensor_info(input_images)
+                tensor_info_predict = tf.saved_model.utils.build_tensor_info(final_predict)
+                prediction_signature = tf.saved_model.signature_def_utils.build_signature_def(
+                    inputs={"images": tensor_info_image},
+                    outputs={"scores": tensor_info_predict},
+                    method_name=tf.saved_model.signature_constants.PREDICT_METHOD_NAME
+                )
+                builder.add_meta_graph_and_variables(
+                    sess, tags=[tf.saved_model.tag_constants.SERVING],
+                    signature_def_map={"predict_images": prediction_signature}
+                )
+                builder.save()

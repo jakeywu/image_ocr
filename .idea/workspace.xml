@@ -2,8 +2,14 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="527fc9c0-95c9-42ac-8a04-1c9063e3a8ed" name="Default" comment="">
+      <change afterPath="$PROJECT_DIR$/data/all_vwsizb.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/blue_身.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/red_N.png" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/data/yellow_ug.png" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/captcha/cnn_lstm_ctc_ocr_model.py" beforeDir="false" afterPath="$PROJECT_DIR$/captcha/cnn_lstm_ctc_ocr_model.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/captcha/prepare_data.py" beforeDir="false" afterPath="$PROJECT_DIR$/captcha/prepare_data.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/data/china_tax.txt" beforeDir="false" afterPath="$PROJECT_DIR$/data/china_tax.txt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/train_captcha.py" beforeDir="false" afterPath="$PROJECT_DIR$/train_captcha.py" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -16,9 +22,9 @@
   <component name="CoverageDataManager">
     <SUITE FILE_PATH="coverage/imageRecognition$tmp.coverage" NAME="tmp Coverage Results" MODIFIED="1530601357960" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/utils" />
     <SUITE FILE_PATH="coverage/imageRecognition$utils.coverage" NAME="utils Coverage Results" MODIFIED="1530774784281" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tmp" />
-    <SUITE FILE_PATH="coverage/imageRecognition$prepare_data.coverage" NAME="prepare_data Coverage Results" MODIFIED="1530846006609" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/captcha" />
     <SUITE FILE_PATH="coverage/imageRecognition$s.coverage" NAME="s Coverage Results" MODIFIED="1530856407672" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/tmp" />
-    <SUITE FILE_PATH="coverage/imageRecognition$train_captcha.coverage" NAME="train_captcha Coverage Results" MODIFIED="1531118195338" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
+    <SUITE FILE_PATH="coverage/imageRecognition$prepare_data.coverage" NAME="prepare_data Coverage Results" MODIFIED="1531388957714" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/captcha" />
+    <SUITE FILE_PATH="coverage/imageRecognition$train_captcha.coverage" NAME="train_captcha Coverage Results" MODIFIED="1531386564563" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$" />
     <SUITE FILE_PATH="coverage/imageRecognition$cnn_lstm_ctc_ocr_model.coverage" NAME="cnn_lstm_ctc_ocr_model Coverage Results" MODIFIED="1530753399008" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="true" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/captcha" />
   </component>
   <component name="FileEditorManager">
@@ -26,8 +32,8 @@
       <file leaf-file-name="train_captcha.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/train_captcha.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="475">
-              <caret line="19" column="59" selection-start-line="19" selection-start-column="59" selection-end-line="19" selection-end-column="59" />
+            <state relative-caret-position="125">
+              <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
               <folding>
                 <element signature="e#0#23#0" expanded="true" />
               </folding>
@@ -35,32 +41,23 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="cnn_lstm_ctc_ocr_model.py" pinned="false" current-in-tab="true">
+      <file leaf-file-name="cnn_lstm_ctc_ocr_model.py" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/captcha/cnn_lstm_ctc_ocr_model.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="247">
-              <caret line="48" column="56" selection-end-line="173" />
-            </state>
-          </provider>
-        </entry>
-      </file>
-      <file leaf-file-name="model_1.py" pinned="false" current-in-tab="false">
-        <entry file="file://$PROJECT_DIR$/captcha/model_1.py">
-          <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="386">
-              <caret line="193" column="27" lean-forward="true" selection-start-line="193" selection-start-column="27" selection-end-line="193" selection-end-column="27" />
+            <state relative-caret-position="154">
+              <caret line="210" column="22" selection-start-line="210" selection-start-column="22" selection-end-line="210" selection-end-column="22" />
               <folding>
-                <element signature="e#0#23#0" expanded="true" />
+                <element signature="e#0#9#0" expanded="true" />
               </folding>
             </state>
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="rnn.py" pinned="false" current-in-tab="false">
-        <entry file="file:///opt/local/anaconda2/envs/tf3/lib/python3.6/site-packages/tensorflow/python/ops/rnn.py">
+      <file leaf-file-name="READ.ME" pinned="false" current-in-tab="true">
+        <entry file="file://$PROJECT_DIR$/READ.ME">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="-3">
-              <caret line="323" column="13" selection-start-line="323" selection-start-column="13" selection-end-line="323" selection-end-column="13" />
+            <state relative-caret-position="200">
+              <caret line="8" selection-start-line="8" selection-end-line="8" />
             </state>
           </provider>
         </entry>
@@ -89,7 +86,6 @@
       <find>reshape</find>
       <find>output_dim</find>
       <find>max_captcha_len</find>
-      <find>pdb</find>
       <find>batch_size</find>
       <find>self.config</find>
       <find>self.batchSize</find>
@@ -100,6 +96,8 @@
       <find>truncated_normal</find>
       <find>loss</find>
       <find>lstm_b</find>
+      <find>0 255</find>
+      <find>pdb</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -115,13 +113,14 @@
         <option value="$PROJECT_DIR$/tmp/utils.py" />
         <option value="$PROJECT_DIR$/data/chinese_vocab.txt" />
         <option value="$PROJECT_DIR$/data/chinese_vocab_1.txt" />
-        <option value="$PROJECT_DIR$/data/china_tax.txt" />
-        <option value="$PROJECT_DIR$/captcha/prepare_data.py" />
         <option value="$PROJECT_DIR$/tmp/s.py" />
-        <option value="$PROJECT_DIR$/captcha/utils.py" />
         <option value="$PROJECT_DIR$/captcha/model_1.py" />
         <option value="$PROJECT_DIR$/train_captcha.py" />
         <option value="$PROJECT_DIR$/captcha/cnn_lstm_ctc_ocr_model.py" />
+        <option value="$PROJECT_DIR$/captcha/utils.py" />
+        <option value="$PROJECT_DIR$/data/china_tax.txt" />
+        <option value="$PROJECT_DIR$/captcha/prepare_data.py" />
+        <option value="$PROJECT_DIR$/READ.ME" />
       </list>
     </option>
   </component>
@@ -153,6 +152,11 @@
               <item name="imageRecognition" type="b2602c69:ProjectViewProjectNode" />
               <item name="imageRecognition" type="462c0819:PsiDirectoryNode" />
             </path>
+            <path>
+              <item name="imageRecognition" type="b2602c69:ProjectViewProjectNode" />
+              <item name="imageRecognition" type="462c0819:PsiDirectoryNode" />
+              <item name="captcha" type="462c0819:PsiDirectoryNode" />
+            </path>
           </expand>
           <select />
         </subPane>
@@ -162,17 +166,17 @@
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../business/company-profile" />
     <property name="nodejs_interpreter_path.stuck_in_default_project" value="undefined stuck path" />
     <property name="nodejs_npm_path_reset_for_default_project" value="true" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
-    <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/captcha" />
-    </key>
     <key name="CopyFile.RECENT_KEYS">
       <recent name="$PROJECT_DIR$/data" />
+    </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/captcha" />
     </key>
   </component>
   <component name="RunDashboard">
@@ -187,7 +191,7 @@
       </list>
     </option>
   </component>
-  <component name="RunManager" selected="Python.train_captcha">
+  <component name="RunManager" selected="Python.prepare_data">
     <configuration name="cnn_lstm_ctc_ocr_model" type="PythonConfigurationType" factoryName="Python" temporary="true">
       <module name="imageRecognition" />
       <option name="INTERPRETER_OPTIONS" value="" />
@@ -292,9 +296,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Python.prepare_data" />
         <item itemvalue="Python.train_captcha" />
         <item itemvalue="Python.s" />
-        <item itemvalue="Python.prepare_data" />
         <item itemvalue="Python.utils" />
         <item itemvalue="Python.cnn_lstm_ctc_ocr_model" />
       </list>
@@ -324,18 +328,18 @@
   </component>
   <component name="ToolWindowManager">
     <frame x="1985" y="-4" width="1855" height="1084" extended-state="6" />
-    <editor active="true" />
     <layout>
       <window_info anchor="bottom" id="TODO" order="6" weight="0.32912722" />
       <window_info anchor="bottom" id="Event Log" order="7" side_tool="true" />
       <window_info anchor="bottom" id="Database Changes" order="7" show_stripe_button="false" />
       <window_info anchor="bottom" id="Version Control" order="7" />
       <window_info anchor="bottom" id="Python Console" order="7" />
-      <window_info anchor="bottom" id="Run" order="2" weight="0.4332282" />
+      <window_info anchor="bottom" id="Run" order="2" weight="0.43294615" />
       <window_info anchor="bottom" id="Terminal" order="7" />
       <window_info active="true" content_ui="combo" id="Project" order="0" visible="true" weight="0.25540167" />
       <window_info anchor="bottom" id="Docker" order="7" show_stripe_button="false" />
       <window_info anchor="right" id="Database" order="3" />
+      <window_info anchor="bottom" id="Find" order="1" weight="0.3284055" />
       <window_info anchor="right" id="SciView" order="3" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
       <window_info id="Favorites" order="2" side_tool="true" />
@@ -346,7 +350,6 @@
       <window_info anchor="right" id="Ant Build" order="1" weight="0.25" />
       <window_info anchor="bottom" id="Message" order="0" />
       <window_info anchor="bottom" id="Cvs" order="4" weight="0.25" />
-      <window_info anchor="bottom" id="Find" order="1" weight="0.32912722" />
     </layout>
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -356,30 +359,6 @@
     <option name="myLimit" value="2678400000" />
   </component>
   <component name="editorHistoryManager">
-    <entry file="file://$PROJECT_DIR$/train_captcha.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="500">
-          <caret line="22" column="12" selection-start-line="22" selection-start-column="12" selection-end-line="22" selection-end-column="12" />
-          <folding>
-            <element signature="e#0#23#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/captcha/cnn_lstm_ctc_ocr_model.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="2625">
-          <caret line="105" column="79" lean-forward="true" selection-start-line="105" selection-start-column="79" selection-end-line="105" selection-end-column="79" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/china_tax.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="550">
-          <caret line="22" column="33" lean-forward="true" selection-start-line="22" selection-start-column="33" selection-end-line="22" selection-end-column="33" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -578,13 +557,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/data/chinese_vocab.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-395">
-          <caret line="80" column="1" selection-start-line="80" selection-end-line="80" selection-end-column="1" />
-        </state>
-      </provider>
-    </entry>
     <entry file="file:///opt/local/anaconda2/envs/tf3/lib/python3.6/site-packages/tensorflow/__init__.py">
       <provider selected="true" editor-type-id="text-editor" />
     </entry>
@@ -616,9 +588,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/__init__.py">
-      <provider selected="true" editor-type-id="text-editor" />
-    </entry>
     <entry file="file:///opt/local/anaconda2/envs/tf3/lib/python3.6/site-packages/tensorflow/python/data/ops/dataset_ops.py">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="125">
@@ -630,30 +599,6 @@
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="306">
           <caret line="5734" column="2" selection-start-line="5734" selection-start-column="2" selection-end-line="5734" selection-end-column="2" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/captcha/utils.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="441">
-          <caret line="18" column="8" selection-start-line="18" selection-start-column="8" selection-end-line="18" selection-end-column="8" />
-          <folding>
-            <element signature="e#0#11#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/data/china_tax.txt">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="-14399">
-          <caret line="2" column="5" lean-forward="true" selection-start-line="2" selection-start-column="5" selection-end-line="2" selection-end-column="45" />
-        </state>
-      </provider>
-    </entry>
-    <entry file="file://$PROJECT_DIR$/captcha/prepare_data.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="141">
-          <caret line="26" column="26" lean-forward="true" selection-start-line="26" selection-start-column="26" selection-end-line="26" selection-end-column="26" />
         </state>
       </provider>
     </entry>
@@ -695,10 +640,57 @@
         </state>
       </provider>
     </entry>
+    <entry file="file://$PROJECT_DIR$/__init__.py">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file:///opt/local/anaconda2/envs/tf3/lib/python3.6/site-packages/tensorflow/contrib/learn/python/learn/monitors.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="306">
+          <caret line="1009" column="6" selection-start-line="1009" selection-start-column="6" selection-end-line="1009" selection-end-column="6" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file:///opt/local/anaconda2/envs/tf3/lib/python3.6/site-packages/tensorflow/python/saved_model/builder_impl.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-19">
+          <caret line="320" column="39" selection-start-line="320" selection-start-column="35" selection-end-line="320" selection-end-column="39" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/chinese_vocab.txt">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="375">
+          <caret line="94" column="1" lean-forward="true" selection-start-line="94" selection-start-column="1" selection-end-line="94" selection-end-column="1" />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/captcha/utils.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="316">
+          <caret line="13" column="31" selection-start-line="13" selection-start-column="31" selection-end-line="13" selection-end-column="31" />
+          <folding>
+            <element signature="e#0#11#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/data/china_tax.txt">
+      <provider selected="true" editor-type-id="text-editor" />
+    </entry>
+    <entry file="file://$PROJECT_DIR$/captcha/prepare_data.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="-119">
+          <caret line="98" column="20" selection-start-line="98" selection-start-column="20" selection-end-line="98" selection-end-column="20" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
     <entry file="file://$PROJECT_DIR$/train_captcha.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="475">
-          <caret line="19" column="59" selection-start-line="19" selection-start-column="59" selection-end-line="19" selection-end-column="59" />
+        <state relative-caret-position="125">
+          <caret line="5" column="41" selection-start-line="5" selection-start-column="41" selection-end-line="5" selection-end-column="41" />
           <folding>
             <element signature="e#0#23#0" expanded="true" />
           </folding>
@@ -707,8 +699,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/captcha/cnn_lstm_ctc_ocr_model.py">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="247">
-          <caret line="48" column="56" selection-end-line="173" />
+        <state relative-caret-position="154">
+          <caret line="210" column="22" selection-start-line="210" selection-start-column="22" selection-end-line="210" selection-end-column="22" />
+          <folding>
+            <element signature="e#0#9#0" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/READ.ME">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="200">
+          <caret line="8" selection-start-line="8" selection-end-line="8" />
         </state>
       </provider>
     </entry>
