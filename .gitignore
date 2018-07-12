@@ -1,8 +1,9 @@
-.idea/*
-
+.idea/
 *.pyc
+*.log
+tmp/
+__init__.py
+__pycache__/
 
-*.log 
 
-tmp/* 
 
