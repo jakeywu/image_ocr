@@ -18,7 +18,6 @@ class ImageCaptchaHandle(object):
         dst_width = tf.to_int32(shape[1] * self.CaptchaHeight / shape[0])
         image = tf.image.resize_images(image, tf.stack([self.CaptchaHeight, dst_width]))
         image = tf.image.resize_image_with_crop_or_pad(image, self.CaptchaHeight, self.CaptchaWidth)
-        image = tf.image.transpose_image(image)
         image = 1. / 255 * image - 0.5
         return image
 
@@ -96,7 +95,7 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         cnn_layers = self.__cnn_layers(inputs, is_training)  # 默认NWHC
         shapes = cnn_layers.get_shape().as_list()
         # 视W为特征max_timestep
-        nets = tf.reshape(cnn_layers, shape=[-1, shapes[1], shapes[2] * shapes[3]])
+        nets = tf.reshape(cnn_layers, shape=[-1, shapes[2], shapes[1] * shapes[3]])
         nets = tf.layers.dense(inputs=nets, units=256, activation=tf.nn.relu)
         self.seq_len = tf.reduce_sum(tf.cast(tf.not_equal(-9999999., tf.reduce_sum(nets, axis=2)),
                                              tf.int32), axis=1)

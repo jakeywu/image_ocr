@@ -1,6 +1,6 @@
 import tensorflow as tf
 from captcha.utils import PrepareData
-from captcha.cnn_lstm_ctc_ocr_model import CnnRnnCtcOrc
+from captcha.image_ocr_model import CnnRnnCtcOrc
 
 tf.flags.DEFINE_string(name="image_path", default="/usr/projects/nlp/imageRecognition/data/china_tax.txt", help="image path which had prepared")
 tf.flags.DEFINE_string(name="char_path", default="/usr/projects/nlp/imageRecognition/data/char_index.txt", help="how many chars to identify")
