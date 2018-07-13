@@ -80,7 +80,6 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         self.session = tf.Session()
 
     def _init_placeholder(self):
-        """输入层"""
         self.file_paths = tf.placeholder(tf.string, shape=[None], name="image_names")
         self.targets = tf.placeholder(tf.int32, shape=[None, self.maxCaptchaLen])
         self.is_training = tf.placeholder(tf.bool, name="is_training")
@@ -88,14 +87,12 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         self.epoch = tf.placeholder(tf.int64, name="epoch")
 
     def _make_data_iterator(self):
-        """数据准备层"""
         dataset = tf.data.Dataset.from_tensor_slices({"file_path": self.file_paths, "target": self.targets})
         dataset = dataset.map(self._image_process).batch(self.batch_size).repeat(self.epoch)
         self.iterator = dataset.make_initializable_iterator()
         self.images, self.labels = self.iterator.get_next()
 
     def _inference(self, inputs, is_training):
-        """模型推理层"""
         cnn_layers = self.__cnn_layers(inputs, is_training)  # 默认NWHC
         shapes = cnn_layers.get_shape().as_list()
         # 视W为特征max_timestep
@@ -106,7 +103,6 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         return self.__lstm_layers(inputs=nets)
 
     def _build_train_op(self):
-        """构建/优化训练模型"""
         self.sparse_label = self._get_sparse_tensor(self.labels)
         self.ctc_loss = tf.nn.ctc_loss(inputs=self.logits, labels=self.sparse_label, sequence_length=self.seq_len)
         self.loss = tf.reduce_mean(self.ctc_loss)
@@ -132,7 +128,7 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
 
             self.logits = tf.matmul(bi_outputs, lstm_w) + lstm_b
             self.logits = tf.reshape(self.logits, [shape[0], inputs.shape[1], self.outputDim])
-            # Time major
+            # TimeStep major for ctc loss
             return tf.transpose(self.logits, (1, 0, 2))
 
     def __cnn_layers(self, inputs, is_training):

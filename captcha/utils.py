@@ -5,8 +5,9 @@ import tensorflow as tf
 
 
 class PrepareData(object):
-    def __init__(self, image_path, ratio):
+    def __init__(self, image_path, ratio, char_path):
         self.imagePath = image_path
+        self.charPath = char_path
         self.ratio = ratio
         self.srcData = self.__load_china_tax()
         self.totalLen = len(self.srcData["imagePath"])
@@ -14,6 +15,12 @@ class PrepareData(object):
     def __load_china_tax(self):
         with codecs.open(self.imagePath, "r", "utf8") as f:
             return json.loads(f.read())
+
+    @property
+    def output_dim(self):
+        # blank
+        with codecs.open(self.charPath, "r", "utf8") as f:
+            return len(json.loads(f.read()).keys()) + 1
 
     @property
     def train_and_test_data(self):

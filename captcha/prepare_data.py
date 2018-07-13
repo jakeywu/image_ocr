@@ -2,7 +2,7 @@ import os
 import cv2
 import json
 import codecs
-import tensorflow as tf
+import collections
 from collections import Counter
 
 color_range = {
@@ -16,38 +16,43 @@ class PreImageByTensorSlice(object):
     def __init__(self, src, target):
         self.srcPath = src
         self.targetPath = target
-        self.vocabIndex = self.__read_chinese_vocab()
+        self.__del_target_file_names()
+        self.fileNames = self.__image_file_names()
+        self.charPath = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "char_index.txt")
+        self.charIndex = self.__captcha_char()
 
-    def read_captcha_files(self):
-        file_names = tf.gfile.ListDirectory(self.targetPath)
-        if not file_names:
-            assert "{}目录下文件不能为空".format(self.targetPath)
-        return file_names
+    def __image_file_names(self):
+        return os.listdir(self.srcPath)
 
-    @staticmethod
-    def __read_chinese_vocab():
-        vocab_index = dict()
-        chinese_vocab_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "chinese_vocab.txt")
-        with codecs.open(chinese_vocab_path, "r", "utf8") as f:
-            for i, line in enumerate(f.readlines()):
-                vocab_index[line.replace("\n", "")] = i
-        return vocab_index
+    def __del_target_file_names(self):
+        for name in os.listdir(self.targetPath):
+            os.remove(os.path.join(self.targetPath, name))
+
+    def __captcha_char(self):
+        char_index = collections.OrderedDict()
+        index_char = collections.OrderedDict()
+        char_names = "".join([str(file_name.split(".")[0]).split("_")[2].lower() for file_name in self.fileNames])
+        for index, char in enumerate(list(set(char_names))):
+            char_index[char.lower()] = index
+            index_char[index] = char.lower()
+        with codecs.open(self.charPath, "w", "utf8") as f:
+            f.write(json.dumps(index_char, indent=2, ensure_ascii=False))
+        return char_index
 
     def format_china_tax(self):
         """国家税务网"""
         image_dict = dict()
         label_lst = []
-        image_names = self.read_captcha_files()
-        for file_name in image_names:
+        for file_name in self.fileNames:
             try:
-                captcha_char = file_name.split(".")[0].split("_")[2]
-                char_index = [self.vocabIndex[char.lower()] for char in captcha_char]
+                captcha_char = str(file_name.split(".")[0]).split("_")[2].lower()
+                char_index = [self.charIndex[char] for char in captcha_char]
                 label_lst.append(char_index)
             except Exception as e:
                 raise e
 
         image_dict["label"] = label_lst
-        image_dict["imagePath"] = [os.path.join(self.targetPath, image_name) for image_name in image_names]
+        image_dict["imagePath"] = [os.path.join(self.targetPath, image_name) for image_name in self.fileNames]
         return image_dict
 
     @staticmethod
@@ -63,7 +68,7 @@ class PreImageByTensorSlice(object):
             return False
         return True
 
-    def convert_image_color(self, img, color="All"):
+    def convert_image_color(self, img, color):
         target_pixels = []
         given_pixels = []
         assert color in ["Red", "Blue", "Yellow", "All"]
@@ -104,7 +109,7 @@ class PreImageByTensorSlice(object):
         for file_path in os.listdir(self.srcPath):
             self.__img_convert(os.path.join(self.srcPath, file_path))
         china_tax = self.format_china_tax()
-        with codecs.open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "china_tax.txt"), "a",
+        with codecs.open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "china_tax.txt"), "w",
                          "utf8") as f:
             f.write(json.dumps(china_tax, indent=2, ensure_ascii=False))
 
@@ -113,5 +118,3 @@ if __name__ == "__main__":
     src_path = "/home/littlefish/trainData/image/china_tax/source_path"
     target_path = "/home/littlefish/trainData/image/china_tax/target_path"
     PreImageByTensorSlice(src_path, target_path).prepare_img_data()
-
-
