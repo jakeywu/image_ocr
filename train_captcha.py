@@ -21,7 +21,7 @@ def main(_):
     train_x, train_y, test_x, test_y = pd.train_and_test_data
     model = CnnRnnCtcOrc(FLAGS.max_captcha_len, pd.output_dim, FLAGS.num_lstm_hidden)
     model.train(train_x, train_y, FLAGS)
-    model.train(test_x, test_y, FLAGS)
+    model.test(test_x, test_y, FLAGS)
     model.release(FLAGS.export_dir)
 
 

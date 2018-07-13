@@ -185,12 +185,12 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
                 break
         self.save(self.session)
 
-    def test(self, data, batch_size=16):
+    def test(self, test_x, test_y, config):
         self.session.run(self.iterator.initializer,
-                         feed_dict={self.file_paths: data["file_paths"],
-                                    self.labels: data["labels"],
+                         feed_dict={self.file_paths: test_x,
+                                    self.labels: test_y,
                                     self.epoch: 1,
-                                    self.batch_size: batch_size})
+                                    self.batch_size: config.batch_size})
 
         step = 0
         while True:
