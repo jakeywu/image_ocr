@@ -18,6 +18,7 @@ class ImageCaptchaHandle(object):
         dst_width = tf.to_int32(shape[1] * self.CaptchaHeight / shape[0])
         image = tf.image.resize_images(image, tf.stack([self.CaptchaHeight, dst_width]))
         image = tf.image.resize_image_with_crop_or_pad(image, self.CaptchaHeight, self.CaptchaWidth)
+        image = tf.image.transpose_image(image)
         image = 1. / 255 * image - 0.5
         return image
 
@@ -45,8 +46,7 @@ class ImageCaptchaHandle(object):
     def _batch_norm(neural, scope_name, is_training):
         """批量归一化"""
         with tf.variable_scope(scope_name):
-            bn_neural = tf.layers.batch_normalization(
-                inputs=neural, center=True, scale=True, training=is_training, name="batchNormalization")
+            bn_neural = tf.layers.batch_normalization(neural, training=is_training)
             return bn_neural
 
     @staticmethod
@@ -95,8 +95,8 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         cnn_layers = self.__cnn_layers(inputs, is_training)  # 默认NWHC
         shapes = cnn_layers.get_shape().as_list()
         # 视W为特征max_timestep
-        nets = tf.reshape(cnn_layers, shape=[-1, shapes[2], shapes[1] * shapes[3]])
-        nets = tf.layers.dense(inputs=nets, units=256, activation=tf.nn.relu)
+        nets = tf.reshape(cnn_layers, shape=[-1, shapes[1], shapes[2] * shapes[3]])
+        nets = tf.layers.dense(inputs=nets, units=128, activation=tf.nn.relu)
         self.seq_len = tf.reduce_sum(tf.cast(tf.not_equal(-9999999., tf.reduce_sum(nets, axis=2)),
                                              tf.int32), axis=1)
         return self.__lstm_layers(inputs=nets)
@@ -135,17 +135,17 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         with tf.name_scope("cnn"):
             conv1 = self._cnn_2d(inputs, "cnn-1", 3, 32)
             bn1 = self._batch_norm(conv1, "bn-1", is_training)
-            relu1 = tf.nn.leaky_relu(bn1, alpha=0.1, name="leaky_relu")
+            relu1 = tf.nn.leaky_relu(bn1, alpha=0.2, name="leaky_relu_1")
             pool1 = self._max_pool(relu1, 2)
 
             conv2 = self._cnn_2d(pool1, "cnn-2", 32, 64)
             bn2 = self._batch_norm(conv2, "bn-2", is_training)
-            p_relu2 = tf.nn.leaky_relu(bn2, alpha=0.1, name="leaky_relu")
+            p_relu2 = tf.nn.leaky_relu(bn2, alpha=0.2, name="leaky_relu_2")
             pool2 = self._max_pool(p_relu2, 2)
 
             conv3 = self._cnn_2d(pool2, "cnn-3", 64, 128)
             bn3 = self._batch_norm(conv3, "bn-3", is_training)
-            p_relu3 = tf.nn.leaky_relu(bn3, alpha=0.1, name="leaky_relu")
+            p_relu3 = tf.nn.leaky_relu(bn3, alpha=0.2, name="leaky_relu_3")
             pool3 = self._max_pool(p_relu3, 2)
         return pool3
 
@@ -168,6 +168,7 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         with tf.control_dependencies(update_ops):
             train_op = tf.train.GradientDescentOptimizer(learning_rate=config.learning_rate).minimize(self.loss)
         self.session.run(tf.global_variables_initializer())
+        # self.load(self.session)
         self.session.run(
             [self.iterator.initializer],
             feed_dict={self.file_paths: train_x, self.targets: train_y, self.batch_size: config.batch_size, self.epoch: config.epoch}
@@ -187,7 +188,7 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
     def test(self, test_x, test_y, config):
         self.session.run(self.iterator.initializer,
                          feed_dict={self.file_paths: test_x,
-                                    self.labels: test_y,
+                                    self.targets: test_y,
                                     self.epoch: 1,
                                     self.batch_size: config.batch_size})
 
@@ -206,7 +207,7 @@ class CnnRnnCtcOrc(ImageCaptchaHandle):
         g = tf.Graph()
         with g.as_default():
             input_images = tf.placeholder(tf.uint8, shape=[None, None, None, 3])
-            f_input_images = tf.map_fn(ImageCaptchaHandle.format_image, input_images, tf.float32)
+            f_input_images = tf.map_fn(self.format_image, input_images, tf.float32)
             outputs = self._inference(f_input_images, is_training=False)
             seq_length = tf.reduce_sum(tf.cast(tf.not_equal(-999999., tf.reduce_sum(outputs, axis=2)),
                                                tf.int32), axis=0)

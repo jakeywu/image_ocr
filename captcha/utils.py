@@ -5,10 +5,11 @@ import tensorflow as tf
 
 
 class PrepareData(object):
-    def __init__(self, image_path, ratio, char_path):
+    def __init__(self, image_path, ratio, char_path, max_captcha_len):
         self.imagePath = image_path
         self.charPath = char_path
         self.ratio = ratio
+        self.maxCaptchaLen = max_captcha_len
         self.srcData = self.__load_china_tax()
         self.totalLen = len(self.srcData["imagePath"])
 
@@ -30,8 +31,8 @@ class PrepareData(object):
         test_file_name = [self.srcData["imagePath"][idx] for idx in rand_idx[train_len:]]
         train_label = [self.srcData["label"][idx] for idx in rand_idx[0:train_len]]
         test_label = [self.srcData["label"][idx] for idx in rand_idx[train_len:]]
-        train_spare_label = tf.keras.preprocessing.sequence.pad_sequences(train_label, maxlen=6, dtype="int32",
-                                                                          padding="post", truncating="post", value=-1)
-        test_spare_label = tf.keras.preprocessing.sequence.pad_sequences(test_label, maxlen=6, dtype="int32",
-                                                                         padding="post", truncating="post", value=-1)
+        train_spare_label = tf.keras.preprocessing.sequence.pad_sequences(
+            train_label, maxlen=self.maxCaptchaLen, dtype="int32", padding="post", truncating="post", value=-1)
+        test_spare_label = tf.keras.preprocessing.sequence.pad_sequences(
+            test_label, maxlen=self.maxCaptchaLen, dtype="int32", padding="post", truncating="post", value=-1)
         return train_file_name, train_spare_label.tolist(), test_file_name, test_spare_label.tolist()

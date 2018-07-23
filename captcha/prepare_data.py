@@ -109,7 +109,7 @@ class PreImageByTensorSlice(object):
         for file_path in os.listdir(self.srcPath):
             self.__img_convert(os.path.join(self.srcPath, file_path))
         china_tax = self.format_china_tax()
-        with codecs.open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "china_tax.txt"), "w",
+        with codecs.open(os.path.join(os.path.dirname(os.path.dirname(__file__)), "data", "china_tax_bak.txt"), "w",
                          "utf8") as f:
             f.write(json.dumps(china_tax, indent=2, ensure_ascii=False))
 
