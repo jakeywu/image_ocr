@@ -1,7 +1,7 @@
 import os
 import tensorflow as tf
-from captcha.utils import PrepareData
-from captcha.image_ocr_model import CnnRnnCtcOrc
+from utils import PrepareData
+from image_ocr_model import CnnRnnCtcOrc
 
 tf.flags.DEFINE_string(name="image_path", default="/usr/projects/nlp/imageRecognition/data/china_tax.txt", help="image path which had prepared")
 tf.flags.DEFINE_string(name="char_path", default="/usr/projects/nlp/imageRecognition/data/char_index.txt", help="how many chars to identify")
@@ -22,8 +22,6 @@ def main(_):
         raise Exception("export_dir {} has exist! please choose another export_dir".format(FLAGS.export_dir))
     pd = PrepareData(FLAGS.image_path, FLAGS.ratio, FLAGS.char_path, FLAGS.max_captcha_len)
     train_x, train_y, test_x, test_y = pd.train_and_test_data
-    import pdb
-    pdb.set_trace()
     model = CnnRnnCtcOrc(FLAGS.max_captcha_len, 37, FLAGS.num_lstm_hidden)
     model.train(train_x, train_y, FLAGS)
     model.test(test_x, test_y, FLAGS)
